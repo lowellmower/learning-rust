@@ -19,3 +19,15 @@ impl Foo for MyType {
     }
 }
 ```
+You can use `impl` to modify the traits to your liking but common conversion
+follows turbofish syntax like below
+```
+fn main() {
+    // common parsing "turbofish" syntax
+    let parsed: i32 = "5".parse().unwrap();
+    let turbo_parsed = "10".parse::<i32>().unwrap();
+
+    let sum = parsed + turbo_parsed;
+    println!{"Sum: {:?}", sum};
+}
+```
