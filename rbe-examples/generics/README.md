@@ -2,7 +2,9 @@
 
 ### Concepts
 - Generic parameters
-- 
+- Generic traits
+- Generic functions
+- Bounds and limiting generics
 
 ### Notes
 Generally, a generic type in Rust is represented as `<T>` but can be identified
