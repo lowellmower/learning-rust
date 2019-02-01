@@ -1,0 +1,1 @@
+{"rustc":11161650738512304635,"features":"[]","target":4449541771041307102,"profile":9867239680796008586,"path":1036222786711178230,"deps":[["byteorder v1.2.7","byteorder",5978616398869279730]],"local":[{"MtimeBased":[[1546954533,658076891],".fingerprint/server-18a576113789f46d/dep-test-bin-server-18a576113789f46d"]}],"rustflags":[],"edition":"Edition2018"}

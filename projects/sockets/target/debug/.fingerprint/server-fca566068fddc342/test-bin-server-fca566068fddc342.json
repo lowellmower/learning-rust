@@ -1,0 +1,1 @@
+{"rustc":18171040772492703089,"features":"[]","target":4449541771041307102,"profile":9867239680796008586,"path":1036222786711178230,"deps":[["byteorder v1.2.7","byteorder",14345932087302454843]],"local":[{"MtimeBased":[[1546955642,199290527],".fingerprint/server-fca566068fddc342/dep-test-bin-server-fca566068fddc342"]}],"rustflags":[],"edition":"Edition2018"}

@@ -3,6 +3,11 @@ extern crate clap;
 use clap::{App, Arg};
 use std::process::{Command, Stdio};
 
+fn write_socket() {
+    let mut stream = UnixStream::connect("/tmp/rust-sock.sock").unwrap();
+    stream.write_all(b"hello world").unwrap();
+}
+
 fn main() {
     let app = App::new("Example CLI")
                     .version("0.1.0")
