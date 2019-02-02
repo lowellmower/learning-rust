@@ -4,8 +4,14 @@ Writing Rust for bare metal. :metal:
 ### Resources
 - [Embedded Rust Book](https://rust-embedded.github.io/book)
 - [Chip Set / Board](https://www.st.com/content/ccc/resource/technical/document/user_manual/8a/56/97/63/8d/56/41/73/DM00063382.pdf/files/DM00063382.pdf/jcr:content/translations/en.DM00063382.pdf)
+- [debugonomicon debugging tools](https://github.com/rust-embedded/debugonomicon/blob/master/src/SUMMARY.md)
 
-### Hardware Specs
+### Lexicon
+- FPU: Floating Point Unit
+- [Cortex-M4](https://developer.arm.com/products/processors/cortex-m/cortex-m4?_ga=2.5663156.608613596.1549114836-1621037207.1548603659): High performance embedded processor.
+- 
+
+### Hardware Specs STM32F3DISCOVERY
 - A single-core ARM Cortex-M4F processor with hardware support for single-precision 
 floating point operations and a maximum clock frequency of 72 MHz.
 
@@ -168,6 +174,70 @@ Breakpoint 1, main () at examples/hello.rs:13
 13        hprintln!("Hello, world!").unwrap();
 (gdb) next
 17        debug::exit(debug::EXIT_SUCCESS);
+```
+Hey Lowell, nice to see you again... if you're reading this and it has been a
+while, and you're trying to debug something, you might want to go to the resource
+suggested by the embedded-rust book, [debugonomicon](https://github.com/rust-embedded/debugonomicon/blob/master/src/SUMMARY.md).
+
+Also, if you're using GDB - here are some [helpful commands](https://github.com/rust-embedded/debugonomicon/blob/master/src/overview.md)
+
+### OpenOCD, GDB, and STM32F3DISCOVERY
+OpenOCD is used to make the connection between the hardware and your host machine.
+Using GDB, we flash our rust program on to the STM32F3DISCOVERY by means or a
+series of commands. Presuming you've already compiled your rust code with cargo,
+start the OpenOCD session (note config file at `./openocd.cfg`)
+```
+discovery [] :> openocd
+Open On-Chip Debugger 0.10.0
+Licensed under GNU GPL v2
+For bug reports, read
+    http://openocd.org/doc/doxygen/bugs.html
+Info : auto-selecting first available session transport "hla_swd". To override use 'transport select <transport>'.
+adapter speed: 1000 kHz
+adapter_nsrst_delay: 100
+Info : The selected transport took over low-level target control. The results might differ compared to plain JTAG/SWD
+none separate
+Info : Unable to match requested speed 1000 kHz, using 950 kHz
+Info : Unable to match requested speed 1000 kHz, using 950 kHz
+Info : clock speed 950 kHz
+Info : STLINK v2 JTAG v27 API v2 SWIM v15 VID 0x0483 PID 0x374B
+Info : using stlink api v2
+Info : Target voltage: 2.892416
+Info : stm32f3x.cpu: hardware has 6 breakpoints, 4 watchpoints
+```
+From another terminal window, start GDB and flash the code:
+```
+discovery [] :> gdb -q target/thumbv7em-none-eabihf/debug/examples/hello
+Reading symbols from target/thumbv7em-none-eabihf/debug/examples/hello...done.
+(gdb) target remote :3333
+Remote debugging using :3333
+0x00000000 in ?? ()
+(gdb) load
+Loading section .vector_table, size 0x400 lma 0x8000000
+Loading section .text, size 0x123c lma 0x8000400
+Loading section .rodata, size 0x2ac lma 0x8001640
+Start address 0x8001400, load size 6376
+Transfer rate: 11 KB/sec, 2125 bytes/write.
+```
+You can see some activity on the other terminal window and the board's LED
+light under COM should be flashing as TX is occurring. From within the GDB
+terminal, enable semihosting if you're in need of debugging:
+```
+(gdb) monitor arm semihosting enable
+semihosting is enabled
+(gdb) break main
+Breakpoint 1 at 0x8000494: file examples/hello.rs, line 13.
+(gdb) continue
+Continuing.
+Note: automatically using hardware breakpoints for read-only addresses.
+
+Breakpoint 1, main () at examples/hello.rs:13
+13      hprintln!("Hello, world!").unwrap();
+(gdb) next
+19      loop {}
+(gdb) next
+^C
+Program received signal SIGINT, Interrupt.
 ```
 
 ##### QEMU (emulator)
