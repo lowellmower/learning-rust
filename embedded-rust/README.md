@@ -101,6 +101,11 @@ app [] :> qemu-system-arm \
 >       -kernel target/thumbv7m-none-eabi/debug/examples/hello
 Hello, world!
 ```
+Rather than execute that each time, we've aliased the command in `.cargo/config`
+so that we can here forward simply run:
+```
+cargo run --example $BIN --release
+```
 For posterity, this is a breakdown of the QEMU emulator flags and what they
 are they are doing:
 ```
