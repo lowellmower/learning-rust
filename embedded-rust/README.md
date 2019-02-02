@@ -1,17 +1,17 @@
-### Embedded Rust
+## Embedded Rust
 Writing Rust for bare metal. :metal:
 
-### Resources
+## Resources
 - [Embedded Rust Book](https://rust-embedded.github.io/book)
 - [Chip Set / Board](https://www.st.com/content/ccc/resource/technical/document/user_manual/8a/56/97/63/8d/56/41/73/DM00063382.pdf/files/DM00063382.pdf/jcr:content/translations/en.DM00063382.pdf)
 - [debugonomicon debugging tools](https://github.com/rust-embedded/debugonomicon/blob/master/src/SUMMARY.md)
 
-### Lexicon
+## Lexicon
 - FPU: Floating Point Unit
 - [Cortex-M4](https://developer.arm.com/products/processors/cortex-m/cortex-m4?_ga=2.5663156.608613596.1549114836-1621037207.1548603659): High performance embedded processor.
 - 
 
-### Hardware Specs STM32F3DISCOVERY
+## Hardware Specs STM32F3DISCOVERY
 - A single-core ARM Cortex-M4F processor with hardware support for single-precision 
 floating point operations and a maximum clock frequency of 72 MHz.
 
@@ -31,7 +31,7 @@ debugger named ST-LINK and is connected to the USB port named "USB ST-LINK"
 - USB port, labeled "USB USER" that is connected to the main micro-controller, the
 STM32F303VCT6, and can be used in applications
 
-### Notes
+## Notes
 Using rust core we can compile a non-native ELF binary and inspect it using
 `cargo-binutils` like:
 ```
@@ -140,7 +140,7 @@ qemu-system-arm
 -kernel $file 
   This tells QEMU which binary to load and run on the emulated machine.
 ```
-### Debugging
+## Debugging
 You can execute code in the QEMU emulator and it will freeze the program at the
 beginning of the instruction set so you can do this:
 ```
@@ -154,8 +154,6 @@ app [] :> qemu-system-arm \
 >       -S \
 >       -kernel target/thumbv7m-none-eabi/debug/examples/hello
 Hello, world!```
-### Software
-##### Open On-Chip Debugger (oocd)
 ```
 ```
 # In a second terminal, start gdb using the path to the same binary
@@ -181,7 +179,7 @@ suggested by the embedded-rust book, [debugonomicon](https://github.com/rust-emb
 
 Also, if you're using GDB - here are some [helpful commands](https://github.com/rust-embedded/debugonomicon/blob/master/src/overview.md)
 
-### OpenOCD, GDB, and STM32F3DISCOVERY
+## OpenOCD, GDB, and STM32F3DISCOVERY
 OpenOCD is used to make the connection between the hardware and your host machine.
 Using GDB, we flash our rust program on to the STM32F3DISCOVERY by means or a
 series of commands. Presuming you've already compiled your rust code with cargo,
@@ -239,8 +237,24 @@ Breakpoint 1, main () at examples/hello.rs:13
 ^C
 Program received signal SIGINT, Interrupt.
 ```
-
-##### QEMU (emulator)
+## Software
+### Open On-Chip Debugger (oocd)
+```
+Open On-Chip Debugger 0.10.0
+Licensed under GNU GPL v2
+For bug reports, read
+    http://openocd.org/doc/doxygen/bugs.html
+Open On-Chip Debugger
+Licensed under GNU GPL v2
+--help       | -h   display this help
+--version    | -v   display OpenOCD version
+--file       | -f   use configuration file <name>
+--search     | -s   dir to search for config files and scripts
+--debug      | -d   set debug level <0-3>
+--log_output | -l   redirect log output to file <name>
+--command    | -c   run <command>
+```
+### QEMU (emulator)
 Used to model architectures and processors. Below are some install notes
 for posterity.
 ```
@@ -256,7 +270,7 @@ For compilers to find ncurses you may need to set:
   export LDFLAGS="-L/usr/local/opt/ncurses/lib"
   export CPPFLAGS="-I/usr/local/opt/ncurses/include"
 ```
-##### GDB install
+### GDB install
 GDB is an amazing embedded debugger and allows you to set break points,
 among other amazing things, in the instruction set. Below are some install
 notes for posterity.
@@ -274,7 +288,7 @@ On 10.12 (Sierra) or later with SIP, you need to run this:
 🍺  /usr/local/Cellar/gdb/8.2.1: 55 files, 26.9MB
 
 ```
-##### Cargo bin utils
+### Cargo bin utils
 The bin utilities for cargo are amazing. They let you look at the size
 of your binary (true size), build for different linkers, and
 do other cool things. Below are some install notes for posterity.
@@ -286,7 +300,7 @@ embedded-rust :> rustup component add llvm-tools-preview
 info: downloading component 'llvm-tools-preview'
 info: installing component 'llvm-tools-preview'
 ```
-##### Rust cross compilation support
+### Rust cross compilation support
 Enables you to cross compile rust for different architectures.
 ```
 rustup target add thumbv6m-none-eabi thumbv7m-none-eabi thumbv7em-none-eabi thumbv7em-none-eabihf
