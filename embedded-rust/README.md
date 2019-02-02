@@ -9,6 +9,7 @@ Writing Rust for bare metal. :metal:
 ## Lexicon
 - FPU: Floating Point Unit
 - [Cortex-M4](https://developer.arm.com/products/processors/cortex-m/cortex-m4?_ga=2.5663156.608613596.1549114836-1621037207.1548603659): High performance embedded processor.
+- [LM3S6965](http://www.ti.com/product/LM3S6965): Micro-controller supported by QEMU
 - 
 
 ## Hardware Specs STM32F3DISCOVERY
@@ -305,3 +306,5 @@ Enables you to cross compile rust for different architectures.
 ```
 rustup target add thumbv6m-none-eabi thumbv7m-none-eabi thumbv7em-none-eabi thumbv7em-none-eabihf
 ```
+## General
+- [riot-os](http://doc.riot-os.org/index.html#riot-in-a-nutshell)
