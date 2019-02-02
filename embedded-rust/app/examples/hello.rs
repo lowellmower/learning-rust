@@ -1,18 +1,5 @@
 //! Prints "Hello, world!" on the host console using semihosting
 
-// This program uses something called semihosting to print text 
-// to the host console. When using real hardware this requires a
-// debug session but when using QEMU this Just Works.
-
-// to build:     cargo build --example hello
-// to inspect:   cargo readobj --example hello -- -file-headers
-// debug (QEMU): qemu-system-arm \
-//               -cpu cortex-m3 \
-//               -machine lm3s6965evb \
-//               -nographic \
-//               -semihosting-config enable=on,target=native \
-//               -kernel target/thumbv7m-none-eabi/debug/examples/hello
-
 #![no_main]
 #![no_std]
 
@@ -31,3 +18,17 @@ fn main() -> ! {
 
     loop {}
 }
+
+// Notes
+// This program uses something called semihosting to print text 
+// to the host console. When using real hardware this requires a
+// debug session but when using QEMU this Just Works.
+
+// to build:     cargo build --example hello
+// to inspect:   cargo readobj --example hello -- -file-headers
+// debug (QEMU): qemu-system-arm \
+//               -cpu cortex-m3 \
+//               -machine lm3s6965evb \
+//               -nographic \
+//               -semihosting-config enable=on,target=native \
+//               -kernel target/thumbv7m-none-eabi/debug/examples/hello

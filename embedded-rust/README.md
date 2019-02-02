@@ -134,9 +134,45 @@ qemu-system-arm
 -kernel $file 
   This tells QEMU which binary to load and run on the emulated machine.
 ```
-
+### Debugging
+You can execute code in the QEMU emulator and it will freeze the program at the
+beginning of the instruction set so you can do this:
+```
+# In one terminal start the emulator noting the port and -S
+app [] :> qemu-system-arm \
+>       -cpu cortex-m3 \
+>       -machine lm3s6965evb \
+>       -nographic \
+>       -semihosting-config enable=on,target=native \
+>       -gdb tcp::3333 \
+>       -S \
+>       -kernel target/thumbv7m-none-eabi/debug/examples/hello
+Hello, world!```
 ### Software
 ##### Open On-Chip Debugger (oocd)
+```
+```
+# In a second terminal, start gdb using the path to the same binary
+app [] :> gdb -q target/thumbv7m-none-eabi/debug/examples/hello
+Reading symbols from target/thumbv7m-none-eabi/debug/examples/hello...done.
+(gdb) target remote :3333
+Remote debugging using :3333
+Reset () at /Users/lowellmower/.cargo/registry/src/github.com-1ecc6299db9ec823/cortex-m-rt-0.6.7/src/lib.rs:498
+498        __pre_init();
+(gdb) break main
+Breakpoint 1 at 0x52c: file examples/hello.rs, line 13.
+(gdb) continue
+Continuing.
+
+Breakpoint 1, main () at examples/hello.rs:13
+13        hprintln!("Hello, world!").unwrap();
+(gdb) next
+17        debug::exit(debug::EXIT_SUCCESS);
+```
+
+##### QEMU (emulator)
+Used to model architectures and processors. Below are some install notes
+for posterity.
 ```
 ==> ncurses
 ncurses is keg-only, which means it was not symlinked into /usr/local,
@@ -150,8 +186,10 @@ For compilers to find ncurses you may need to set:
   export LDFLAGS="-L/usr/local/opt/ncurses/lib"
   export CPPFLAGS="-I/usr/local/opt/ncurses/include"
 ```
-##### QEMU (emulator)
-##### GDB install 
+##### GDB install
+GDB is an amazing embedded debugger and allows you to set break points,
+among other amazing things, in the instruction set. Below are some install
+notes for posterity.
 ```
 ==> Caveats
 gdb requires special privileges to access Mach ports.
@@ -167,6 +205,9 @@ On 10.12 (Sierra) or later with SIP, you need to run this:
 
 ```
 ##### Cargo bin utils
+The bin utilities for cargo are amazing. They let you look at the size
+of your binary (true size), build for different linkers, and
+do other cool things. Below are some install notes for posterity.
 ```
 # https://github.com/rust-embedded/cargo-binutils
 
@@ -176,6 +217,7 @@ info: downloading component 'llvm-tools-preview'
 info: installing component 'llvm-tools-preview'
 ```
 ##### Rust cross compilation support
+Enables you to cross compile rust for different architectures.
 ```
 rustup target add thumbv6m-none-eabi thumbv7m-none-eabi thumbv7em-none-eabi thumbv7em-none-eabihf
 ```
