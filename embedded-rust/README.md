@@ -32,7 +32,43 @@ debugger named ST-LINK and is connected to the USB port named "USB ST-LINK"
 - USB port, labeled "USB USER" that is connected to the main micro-controller, the
 STM32F303VCT6, and can be used in applications
 
-## Notes
+## Quick Notes
+```
+# OpenOCD commands
+monitor reset halt       # reset program
+layout src               # see src code
+target remote :3333      # connect to session   
+load                     # flash bin to processor
+info locals              # see local vars
+break rust_begin_unwind  # catch before panic
+stepi                    # loc and memory address
+print *var               # print a variable, example deref
+```
+To pipe to stdout on local machine **you must solder** (wire connect) PB3 
+`[port B, pin 3]` to SWD and run `touch itm.txt && itmdump -F -f itm.txt` in
+another terminal. See 'diagram' below:
+```
+      ST-Link    User
++--------[ ]-----[ ]-----+
+|                        |
+| +-+ SWD                |
+| | |                    |
+| | |                    |
+| |.|<--+            +-+ |
+| +-+   |            | | |
+|       |            | | |
+|       |            | | |
+|       +----------->|.| | PB3
+|                    | | |
+|           n        | | |
+|         w   e      +-+ |
+|           s            |
++------------------------+
+```
+
+# disassemble of .text ELF linker
+cargo objdump --bin registers -- -d -no-show-raw-insn -print-imm-hex -source
+## Long Notes
 Using rust core we can compile a non-native ELF binary and inspect it using
 `cargo-binutils` like:
 ```
