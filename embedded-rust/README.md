@@ -65,10 +65,11 @@ another terminal. See 'diagram' below:
 |           s            |
 +------------------------+
 ```
-
+```
 # disassemble of .text ELF linker
 cargo objdump --bin registers -- -d -no-show-raw-insn -print-imm-hex -source
-## Long Notes
+```
+## Longer Notes
 Using rust core we can compile a non-native ELF binary and inspect it using
 `cargo-binutils` like:
 ```
