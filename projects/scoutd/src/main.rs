@@ -95,6 +95,8 @@ fn main() -> Result<()> {
     let done = env.listener.incoming()
         .map_err(|e| println!("failed to accept socket; error = {:?}", e))
         .for_each(move |socket| {
+            // All this is currently doing is "echoing" the bytes read
+            // back on to the same socket. This is a trivial example.
             let (reader, writer) = socket.split();
             let amt = tokio::io::copy(reader, writer);
             let msg = amt.then(move |result| {
