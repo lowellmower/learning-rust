@@ -1,54 +1,103 @@
 extern crate actix;
 extern crate futures;
-
-use futures::Future;
+use actix::dev::{MessageResponse, ResponseChannel};
 use actix::prelude::*;
+use futures::Future;
 
-// #[derive(Debug)]
-struct MsgActor {
-    count: usize,
+enum Messages {
+    Ping,
+    Pong,
 }
 
-impl Actor for MsgActor {
+enum Responses {
+    GotPing,
+    GotPong,
+}
+
+impl<A, M> MessageResponse<A, M> for Responses
+where
+    A: Actor,
+    M: Message<Result = Responses>,
+{
+    fn handle<R: ResponseChannel<M>>(self, _: &mut A::Context, tx: Option<R>) {
+        if let Some(tx) = tx {
+            tx.send(self);
+        }
+    }
+}
+
+impl Message for Messages {
+    type Result = Responses;
+}
+
+// Define actor
+struct MyActor;
+
+// Provide Actor implementation for our actor
+impl Actor for MyActor {
     type Context = Context<Self>;
+
+    fn started(&mut self, ctx: &mut Context<Self>) {
+        println!("Actor is alive");
+    }
+
+    fn stopped(&mut self, ctx: &mut Context<Self>) {
+        println!("Actor is stopped");
+    }
 }
 
-struct Ping(usize);
+/// Define handler for `Messages` enum
+impl Handler<Messages> for MyActor {
+    type Result = Responses;
 
-impl Message for Ping {
-    type Result = usize;
-}
-
-impl Handler<Ping> for MsgActor {
-    type Result = usize;
-
-    fn handle(&mut self, msg: Ping, _ctx: &mut Context<Self>) -> Self::Result {
-        self.count += msg.0;
-        self.count
+    fn handle(&mut self, msg: Messages, ctx: &mut Context<Self>) -> Self::Result {
+        match msg {
+            Messages::Ping => Responses::GotPing,
+            Messages::Pong => Responses::GotPong,
+        }
     }
 }
 
 fn main() {
-    let actor_system = System::new("demo");
+    let sys = System::new("example");
 
-    // start the actor to get address
-    let ma_rx = MsgActor{count: 5}.start();
-    
-    // send msg and get future for result
-    let ma_future = ma_rx.send(Ping(3));
+    // Start MyActor in current thread
+    let addr = MyActor.start();
 
+    // Send Ping message.
+    // send() message returns Future object, that resolves to message result
+    let ping_future = addr.send(Messages::Ping);
+    let pong_future = addr.send(Messages::Pong);
+
+    // Spawn pong_future onto event loop
     Arbiter::spawn(
-        ma_future.map(|ma_future| {
-            System::current().stop();
-            println!("RESULT: {}", ma_future);
-        })
-        .map_err(|_|()));
+        pong_future
+            .map(|res| {
+                match res {
+                    Responses::GotPing => println!("Ping received"),
+                    Responses::GotPong => println!("Pong received"),
+                }
+              // System::current().stop();
+            })
+            .map_err(|e| {
+                println!("Actor is probably died: {}", e);
+            }),
+    );
 
-    actor_system.run();
+    // Spawn ping_future onto event loop
+    Arbiter::spawn(
+        ping_future
+            .map(|res| {
+                match res {
+                    Responses::GotPing => println!("Ping received"),
+                    Responses::GotPong => println!("Pong received"),
+                }
+              // System::current().stop();
+            })
+            .map_err(|e| {
+                println!("Actor is probably died: {}", e);
+            }),
+    );
+
+    sys.run();
 }
-
-
-
-
-
-
